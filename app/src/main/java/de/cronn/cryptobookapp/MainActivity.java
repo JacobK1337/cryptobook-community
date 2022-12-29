@@ -1,5 +1,6 @@
 package de.cronn.cryptobookapp;
 
+import static de.cronn.cryptobookapp.http.Currency.BTC;
 import static de.cronn.cryptobookapp.http.Currency.DOGE;
 import static de.cronn.cryptobookapp.http.Currency.USD;
 
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 
 import de.cronn.cryptobookapp.http.CurrenciesDataFetcher;
 import de.cronn.cryptobookapp.http.Price;
+import de.cronn.cryptobookapp.observer.TextViewObservableDecorator;
 
 public class MainActivity extends AppCompatActivity {
     private TextView helloText;
@@ -25,19 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         helloText = findViewById(R.id.helloText);
+        TextViewObservableDecorator textViewObservableDecorator = new TextViewObservableDecorator(helloText);
         CurrenciesDataFetcher currenciesDataFetcher = CurrenciesDataFetcher.getInstance();
-
-        Price price = supplyAsync(() -> currenciesDataFetcher.fetchCoinPrice(DOGE, USD));
-        helloText.setText("DOGE IN " + price.getCurrency() + ": " + price.getPrice());
-    }
-
-
-    private <T> T supplyAsync(Supplier<T> supplier) {
-        try {
-            return CompletableFuture.supplyAsync(supplier).get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+        currenciesDataFetcher.addObserved(textViewObservableDecorator);
+        currenciesDataFetcher.scheduleFetching();
     }
 }

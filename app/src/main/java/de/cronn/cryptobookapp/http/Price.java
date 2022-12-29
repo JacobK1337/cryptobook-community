@@ -4,18 +4,18 @@ import java.math.BigDecimal;
 
 public class Price {
     private final Currency currency;
-    private final BigDecimal price;
+    private final BigDecimal value;
 
-    public Price(Currency currency, BigDecimal price) {
+    public Price(Currency currency, BigDecimal value) {
         this.currency = currency;
-        this.price = price;
+        this.value = value;
     }
 
     public Currency getCurrency() {
         return currency;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getValue() {
+        return value;
     }
 }
