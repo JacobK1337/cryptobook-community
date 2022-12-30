@@ -1,6 +1,8 @@
 package de.cronn.cryptobookapp.http;
 
 
+import static de.cronn.cryptobookapp.http.Currency.USD;
+
 import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,56 +23,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import de.cronn.cryptobookapp.observer.Observable;
 import de.cronn.cryptobookapp.observer.Observer;
 
-public class CurrenciesDataFetcher implements Observer {
-    private static final String API_URL = "https://api.coingecko.com/api/v3/";
+final class CurrenciesDataFetcher implements Observer {
     private static CurrenciesDataFetcher instance;
+    private final String API_URL = "https://api.coingecko.com/api/v3/";
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
     private final List<Observable> observables = new ArrayList<>();
-    private final static Map<Currency, Price> CURRENCIES_IN_USD = new ConcurrentHashMap<>();
+    private final Map<Currency, Price> CURRENCIES_IN_USD = new ConcurrentHashMap<>();
 
     private CurrenciesDataFetcher() {
+        scheduleFetching();
     }
 
-
-    public static CurrenciesDataFetcher getInstance() {
+    static CurrenciesDataFetcher getInstance() {
         if (instance == null) {
             instance = new CurrenciesDataFetcher();
         }
         return instance;
     }
 
-    public Price getPrice(Currency currency){
+    Price getUsdPrice(Currency currency) {
         return CURRENCIES_IN_USD.get(currency);
     }
 
-    public void scheduleFetching()  {
-        scheduledExecutor.scheduleAtFixedRate(this::fetchAndNotify,0, 20, TimeUnit.SECONDS);
+    private void scheduleFetching() {
+        final int FETCH_INTERVAL = 20;
+        scheduledExecutor.scheduleAtFixedRate(this::fetchAndNotify, 0, FETCH_INTERVAL, TimeUnit.SECONDS);
     }
 
-    private void fetchAndNotify(){
-        for(Currency currency : Currency.values()){
-            Price priceInUsd = CompletableFuture.supplyAsync(() -> fetchCoinPrice(currency, Currency.USD)).join();
+    private void fetchAndNotify() {
+        for (Currency currency : Currency.values()) {
+            Price priceInUsd = CompletableFuture.supplyAsync(() -> fetchUsdPrice(currency)).join();
             CURRENCIES_IN_USD.put(currency, priceInUsd);
         }
         notifyObserved();
     }
 
-
-    public Price fetchCoinPrice(Currency currency, Currency getAs) {
+    private Price fetchUsdPrice(Currency currency) {
         Log.i("API_CALL", "Fetching currency " + currency.name());
         try {
-            URL url = new URL(API_URL + "simple/price?ids=" + currency.getApiName() + "&vs_currencies=" + getAs.getApiName());
+            final String USD_API_NAME = USD.getApiName();
+            URL url = new URL(API_URL + "simple/price?ids=" + currency.getApiName() + "&vs_currencies=" + USD_API_NAME);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(conn.getInputStream());
 
@@ -78,11 +79,12 @@ public class CurrenciesDataFetcher implements Observer {
                     new InputStreamReader(in, StandardCharsets.UTF_8)
             ).lines().collect(Collectors.joining());
 
-            TypeReference<HashMap<String, HashMap<String, BigDecimal>>> typeReference = new TypeReference<>() {};
+            TypeReference<HashMap<String, HashMap<String, BigDecimal>>> typeReference = new TypeReference<>() {
+            };
             Map<String, Map<String, BigDecimal>> prices = objectMapper.readValue(responseBody, typeReference);
             in.close();
             conn.disconnect();
-            return new Price(getAs, prices.get(currency.getApiName()).get(getAs.getApiName()));
+            return new Price(USD, prices.get(currency.getApiName()).get(USD_API_NAME));
 
         } catch (IOException ioException) {
             return null;
@@ -91,11 +93,15 @@ public class CurrenciesDataFetcher implements Observer {
 
     @Override
     public void addObserved(Observable observable) {
-        observables.add(observable);
+        synchronized (observables) {
+            observables.add(observable);
+        }
     }
 
     @Override
     public void notifyObserved() {
-        observables.forEach(Observable::update);
+        synchronized (observables) {
+            observables.forEach(Observable::update);
+        }
     }
 }
