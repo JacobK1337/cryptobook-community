@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import de.cronn.cryptobookapp.observer.Observable;
+import de.cronn.cryptobookapp.price.Currency;
+import de.cronn.cryptobookapp.price.Price;
 
 public final class Currencies {
     private static final CurrenciesDataFetcher currenciesDataFetcher =

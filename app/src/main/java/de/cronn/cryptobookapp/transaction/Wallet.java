@@ -2,12 +2,12 @@ package de.cronn.cryptobookapp.transaction;
 
 import java.math.BigDecimal;
 
-import de.cronn.cryptobookapp.http.Currency;
+import de.cronn.cryptobookapp.price.Currency;
 
 //entity candidate
 public class Wallet {
     private final Currency currency;
-    private BigDecimal value;
+    private BigDecimal value = new BigDecimal(0);
 
     public Wallet(Currency currency) {
         this.currency = currency;

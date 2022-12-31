@@ -1,4 +1,4 @@
-package de.cronn.cryptobookapp.http;
+package de.cronn.cryptobookapp.price;
 
 public enum Currency {
     BTC("bitcoin"),

@@ -5,7 +5,7 @@ import com.google.common.collect.MoreCollectors;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.cronn.cryptobookapp.http.Currency;
+import de.cronn.cryptobookapp.price.Currency;
 
 //entity candidate
 public class User {

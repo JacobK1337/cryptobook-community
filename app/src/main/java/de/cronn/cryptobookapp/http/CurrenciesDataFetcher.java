@@ -1,7 +1,7 @@
 package de.cronn.cryptobookapp.http;
 
 
-import static de.cronn.cryptobookapp.http.Currency.USD;
+import static de.cronn.cryptobookapp.price.Currency.USD;
 
 import android.util.Log;
 
@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 
 import de.cronn.cryptobookapp.observer.Observable;
 import de.cronn.cryptobookapp.observer.Observer;
+import de.cronn.cryptobookapp.price.Currency;
+import de.cronn.cryptobookapp.price.Price;
 
 final class CurrenciesDataFetcher implements Observer {
     private static CurrenciesDataFetcher instance;
@@ -50,7 +52,7 @@ final class CurrenciesDataFetcher implements Observer {
         return instance;
     }
 
-    Price getUsdPrice(Currency currency) {
+    synchronized Price getUsdPrice(Currency currency) {
         return CURRENCIES_IN_USD.get(currency);
     }
 
@@ -59,7 +61,7 @@ final class CurrenciesDataFetcher implements Observer {
         scheduledExecutor.scheduleAtFixedRate(this::fetchAndNotify, 0, FETCH_INTERVAL, TimeUnit.SECONDS);
     }
 
-    private void fetchAndNotify() {
+    private synchronized void fetchAndNotify() {
         for (Currency currency : Currency.values()) {
             Price priceInUsd = CompletableFuture.supplyAsync(() -> fetchUsdPrice(currency)).join();
             CURRENCIES_IN_USD.put(currency, priceInUsd);
