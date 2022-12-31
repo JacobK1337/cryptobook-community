@@ -22,14 +22,13 @@ import de.cronn.cryptobookapp.transaction.Transactions;
 import de.cronn.cryptobookapp.transaction.User;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView helloText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        helloText = findViewById(R.id.helloText);
+        TextView helloText = findViewById(R.id.helloText);
         TextViewObservableDecorator textViewObservableDecorator = new TextViewObservableDecorator(helloText);
         Currencies.listenForChanges(textViewObservableDecorator);
 

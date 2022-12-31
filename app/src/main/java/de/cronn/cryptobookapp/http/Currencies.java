@@ -8,8 +8,7 @@ import de.cronn.cryptobookapp.price.Currency;
 import de.cronn.cryptobookapp.price.Price;
 
 public final class Currencies {
-    private static final CurrenciesDataFetcher currenciesDataFetcher =
-            CurrenciesDataFetcher.getInstance();
+    private static final CurrenciesDataFetcher currenciesDataFetcher = CurrenciesDataFetcher.getInstance();
 
     private Currencies(){}
 
