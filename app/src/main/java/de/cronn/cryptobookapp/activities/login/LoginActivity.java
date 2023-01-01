@@ -2,18 +2,11 @@ package de.cronn.cryptobookapp.activities.login;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -25,6 +18,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import de.cronn.cryptobookapp.InMemoryDbHelper;
 import de.cronn.cryptobookapp.R;
 import de.cronn.cryptobookapp.databinding.ActivityLoginBinding;
 import de.cronn.cryptobookapp.model.User;
-import de.cronn.cryptobookapp.service.UserService;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -122,16 +120,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
+        loginButton.setOnClickListener(v -> {
+            loadingProgressBar.setVisibility(View.VISIBLE);
 
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+            String username = usernameEditText.getText().toString();
 
-                System.out.println(getAllUsers());
+            if(userExists(username).equals(Boolean.FALSE)) {
+                insertUser(username);
             }
+
+            loginViewModel.login(usernameEditText.getText().toString(),
+                    passwordEditText.getText().toString());
+
+            System.out.println(getAllUsers());
         });
     }
 
@@ -172,4 +173,34 @@ public class LoginActivity extends AppCompatActivity {
 
         return users;
     }
+
+    private void insertUser(String name) {
+        InMemoryDbHelper dbHelper = new InMemoryDbHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        db.insert("users", null, values);
+
+        db.close();
+    }
+
+    public Boolean userExists(String name) {
+        InMemoryDbHelper dbHelper = new InMemoryDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String selectQuery = "SELECT COUNT(*) FROM users WHERE name = ?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[] {name});
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        db.close();
+
+        return count > 0;
+    }
+
 }
