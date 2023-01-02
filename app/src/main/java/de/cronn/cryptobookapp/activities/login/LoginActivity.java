@@ -1,11 +1,6 @@
 package de.cronn.cryptobookapp.activities.login;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,13 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.cronn.cryptobookapp.InMemoryDbHelper;
 import de.cronn.cryptobookapp.R;
 import de.cronn.cryptobookapp.databinding.ActivityLoginBinding;
-import de.cronn.cryptobookapp.model.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -123,16 +114,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
 
-            String username = usernameEditText.getText().toString();
-
-            if(userExists(username).equals(Boolean.FALSE)) {
-                insertUser(username);
-            }
-
             loginViewModel.login(usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
-
-            System.out.println(getAllUsers());
         });
     }
 
@@ -144,63 +127,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
-
-    public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
-
-        InMemoryDbHelper dbHelper = new InMemoryDbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String selectQuery = "SELECT * FROM users";
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
-                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex("name"));
-
-                User user = new User();
-                user.setId(id);
-                user.setName(name);
-
-                users.add(user);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return users;
-    }
-
-    private void insertUser(String name) {
-        InMemoryDbHelper dbHelper = new InMemoryDbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        db.insert("users", null, values);
-
-        db.close();
-    }
-
-    public Boolean userExists(String name) {
-        InMemoryDbHelper dbHelper = new InMemoryDbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String selectQuery = "SELECT COUNT(*) FROM users WHERE name = ?";
-        Cursor cursor = db.rawQuery(selectQuery, new String[] {name});
-
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-
-        cursor.close();
-        db.close();
-
-        return count > 0;
     }
 
 }
