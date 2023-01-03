@@ -36,8 +36,8 @@ public class TextViewObservableDecorator implements Observable {
             String newText = DOGE.name() + ": " + Currencies.getUsdPrice(DOGE).getValue() + "\n" +
                     BTC.name() + ": " + Currencies.getUsdPrice(BTC).getValue() + "\n" +
                     ETH.name() + ": " + Currencies.getUsdPrice(ETH).getValue() + "\n" +
-                    "ETH TO DOGE: " + Currencies.convert(Currencies.getUsdPrice(ETH), DOGE).getValue() + "\n" +
-                    "BTC TO ETH: " + Currencies.convert(new Price(BTC, new BigDecimal(1)), ETH).getValue() + "\n" +
+                    "3ETH TO DOGE: " + ETH3.convertTo(DOGE).getValue() + "\n" +
+                    "3BTC TO ETH: " + BTC3.convertTo(ETH).getValue() + "\n" +
                     "3 ETH + 12 DOGE: " + ethPlusDoge + "\n" +
                     "3 BTC + 3 ETH: " + btcPlusEth;
             textView.setText(newText);

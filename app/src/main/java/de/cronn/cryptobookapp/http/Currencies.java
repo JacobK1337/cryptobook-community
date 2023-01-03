@@ -1,7 +1,5 @@
 package de.cronn.cryptobookapp.http;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 import de.cronn.cryptobookapp.observer.Observable;
 import de.cronn.cryptobookapp.price.Currency;
@@ -12,6 +10,9 @@ public final class Currencies {
 
     private Currencies(){}
 
+    public static void init(){
+    }
+
     public static Price getUsdPrice(Currency currency){
         return currenciesDataFetcher.getUsdPrice(currency);
     }
@@ -20,11 +21,4 @@ public final class Currencies {
         currenciesDataFetcher.addObserved(observable);
     }
 
-    public static Price convert(Price convertFrom, Currency currencyTo){
-        BigDecimal oldCurrencyUsdPrice = convertFrom.getValue()
-                .multiply(currenciesDataFetcher.getUsdPrice(convertFrom.getCurrency()).getValue());
-        BigDecimal newCurrencyUsdPrice = currenciesDataFetcher.getUsdPrice(currencyTo)
-                .getValue();
-        return new Price(currencyTo, oldCurrencyUsdPrice.divide(newCurrencyUsdPrice, RoundingMode.CEILING));
-    }
 }

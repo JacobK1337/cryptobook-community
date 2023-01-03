@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,9 +20,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.math.BigDecimal;
+
 import de.cronn.cryptobookapp.InMemoryDbHelper;
 import de.cronn.cryptobookapp.R;
 import de.cronn.cryptobookapp.databinding.ActivityLoginBinding;
+import de.cronn.cryptobookapp.http.Currencies;
+import de.cronn.cryptobookapp.price.Currency;
+import de.cronn.cryptobookapp.price.Price;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -31,6 +37,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Currencies.init();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.i("CONVERT", "Converting 2 BTC to DOGE");
+        Price BTC2 = new Price(Currency.BTC, new BigDecimal(2));
+        Log.i("CONVERT", BTC2.convertTo(Currency.DOGE).getValue().toString());
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

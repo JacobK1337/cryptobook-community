@@ -1,9 +1,8 @@
 package de.cronn.cryptobookapp.price;
 
 
+import java.math.RoundingMode;
 import java.util.function.BiFunction;
-
-import de.cronn.cryptobookapp.http.Currencies;
 
 public final class PriceExpression {
     private final Type type;
@@ -17,8 +16,10 @@ public final class PriceExpression {
     }
 
     public enum Type {
-        SUM((a, b) -> sum(a, b)),
-        SUBTRACT((a, b) -> subtract(a, b));
+        SUM((a, b) -> new Price(a.getCurrency(), a.getValue().add(b.getValue()))),
+        SUBTRACT((a, b) -> new Price(a.getCurrency(), a.getValue().subtract(b.getValue()))),
+        MULTIPLY((a, b) -> new Price(a.getCurrency(), a.getValue().multiply(b.getValue()))),
+        DIVIDE((a, b) -> new Price(a.getCurrency(), a.getValue().divide(b.getValue(), RoundingMode.CEILING)));
 
         private final BiFunction<Price, Price, Price> strategy;
 
@@ -28,25 +29,6 @@ public final class PriceExpression {
     }
 
     public Price getAs(Currency currency) {
-        Price firstInGivenCurrency = Currencies.convert(first, currency);
-        Price secondInGivenCurreny = Currencies.convert(second, currency);
-
-        return type.strategy.apply(firstInGivenCurrency, secondInGivenCurreny);
-    }
-
-    private static Price sum(Price one, Price two) {
-        assertCurrenciesMatch(one, two);
-        return new Price(one.getCurrency(), one.getValue().add(two.getValue()));
-    }
-
-    private static Price subtract(Price one, Price two) {
-        assertCurrenciesMatch(one, two);
-        return new Price(one.getCurrency(), one.getValue().subtract(two.getValue()));
-    }
-
-    private static void assertCurrenciesMatch(Price one, Price two){
-        if(one.getCurrency() != two.getCurrency()){
-            throw new IllegalStateException("Currencies don't match");
-        }
+        return type.strategy.apply(first.convertTo(currency), second.convertTo(currency));
     }
 }

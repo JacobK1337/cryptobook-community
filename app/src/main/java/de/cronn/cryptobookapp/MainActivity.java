@@ -14,10 +14,7 @@ import android.widget.TextView;
 import java.math.BigDecimal;
 
 import de.cronn.cryptobookapp.http.Currencies;
-import de.cronn.cryptobookapp.price.Currency;
 import de.cronn.cryptobookapp.observer.TextViewObservableDecorator;
-import de.cronn.cryptobookapp.transaction.ExchangeTransaction;
-import de.cronn.cryptobookapp.transaction.TransactionContext;
 import de.cronn.cryptobookapp.transaction.Transactions;
 import de.cronn.cryptobookapp.transaction.User;
 
