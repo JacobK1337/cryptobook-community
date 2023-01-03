@@ -5,6 +5,8 @@ import static de.cronn.cryptobookapp.price.PriceExpression.Type.MULTIPLY;
 import static de.cronn.cryptobookapp.price.PriceExpression.Type.SUBTRACT;
 import static de.cronn.cryptobookapp.price.PriceExpression.Type.SUM;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -41,6 +43,7 @@ public class Price {
         Price thisInUsd = new Price(Currency.USD,
                 this.getValue().multiply(Currencies.getUsdPrice(this.getCurrency()).getValue()));
 
+        Log.i("CONVERT: ", currency.name() + " " + value.toString() + " = " + thisInUsd.getValue() + " USD");
         return new Price(convertTo, thisInUsd.getValue().divide(convertToUsdPrice.getValue(), RoundingMode.CEILING));
     }
 

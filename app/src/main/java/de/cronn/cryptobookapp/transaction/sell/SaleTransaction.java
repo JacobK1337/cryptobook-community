@@ -2,11 +2,11 @@ package de.cronn.cryptobookapp.transaction.sell;
 
 import android.util.Log;
 
-import java.math.BigDecimal;
 
+import de.cronn.cryptobookapp.model.Offer;
+import de.cronn.cryptobookapp.model.User;
+import de.cronn.cryptobookapp.model.Wallet;
 import de.cronn.cryptobookapp.transaction.Transaction;
-import de.cronn.cryptobookapp.transaction.User;
-import de.cronn.cryptobookapp.transaction.Wallet;
 
 public class SaleTransaction extends Transaction<SaleContext> {
 
@@ -18,18 +18,16 @@ public class SaleTransaction extends Transaction<SaleContext> {
     protected void execute(User user) {
         Wallet wallet = user.getWallet(getContext().getCurrency());
 
-        assertHasEnoughCredits(wallet, getContext().getAmount());
-
         Log.i("TRANSACTION",
                 String.format("Putting %s %s to sale", getContext().getAmount(), getContext().getCurrency()));
 
-        //Freeze users credits
-        //Create offer & save
-    }
+        Offer offer = new Offer();
+        offer.setCurrency(getContext().getCurrency());
+        offer.setAmount(getContext().getAmount());
 
-    private void assertHasEnoughCredits(Wallet wallet, BigDecimal amount){
-        if(wallet.getValue().compareTo(amount) < 0){
-            throw new IllegalStateException("Not enough credits");
-        }
+        wallet.setBalance(wallet.getBalance().subtract(getContext().getAmount()));
+
+        //walletDao.saveWallet(wallet) TODO
+        //offerDao.saveOffer(offer) TODO
     }
 }

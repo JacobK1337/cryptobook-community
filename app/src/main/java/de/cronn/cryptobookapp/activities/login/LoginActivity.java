@@ -45,7 +45,18 @@ public class LoginActivity extends AppCompatActivity {
         }
         Log.i("CONVERT", "Converting 2 BTC to DOGE");
         Price BTC2 = new Price(Currency.BTC, new BigDecimal(2));
+        Price ETH3 = new Price(Currency.ETH, new BigDecimal(3));
+        Price USD5 = new Price(Currency.USD, new BigDecimal(5));
         Log.i("CONVERT", BTC2.convertTo(Currency.DOGE).getValue().toString());
+
+        //1.171482E-8
+        //btc2 = 33464 USD
+        //eth3 = 3651 USD
+        //division = 9,16 btc/eth
+        Log.i("Crazy expression: ", BTC2.divide(ETH3).getAs(Currency.DOGE).multiply(USD5)
+                .getAs(Currency.BTC).getValue().toString());
+
+
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

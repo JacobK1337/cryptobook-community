@@ -1,5 +1,7 @@
 package de.cronn.cryptobookapp.transaction;
 
+import de.cronn.cryptobookapp.model.User;
+
 public class TransactionExecutor {
     private final Transaction<?> transaction;
 
