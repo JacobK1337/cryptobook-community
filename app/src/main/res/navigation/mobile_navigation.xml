@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_wallet">
+
+    <fragment
+        android:id="@+id/nav_wallet"
+        android:name="de.cronn.cryptobookapp.activities.dashboard.ui.Wallet.WalletFragment"
+        android:label="@string/menu_wallet"
+        tools:layout="@layout/fragment_wallet" />
+
+    <fragment
+        android:id="@+id/nav_transaction_history"
+        android:name="de.cronn.cryptobookapp.activities.dashboard.ui.transactionHistory.TransactionHistoryFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_transaction_history" />
+
+    <fragment
+        android:id="@+id/nav_social"
+        android:name="de.cronn.cryptobookapp.activities.dashboard.ui.social.SocialFragment"
+        android:label="@string/menu_social"
+        tools:layout="@layout/fragment_social" />
+</navigation>

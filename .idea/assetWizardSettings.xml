@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$PROJECT_DIR$/../Android/Sdk/icons/material/materialicons/lock/baseline_lock_24.xml" />
+                                      <entry key="url" value="file:$PROJECT_DIR$/../Android/Sdk/icons/material/materialicons/account_balance_wallet/baseline_account_balance_wallet_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,7 +33,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_lock" />
+                            <entry key="outputName" value="ic_baseline_account_balance_wallet_24" />
                           </map>
                         </option>
                       </PersistentState>
