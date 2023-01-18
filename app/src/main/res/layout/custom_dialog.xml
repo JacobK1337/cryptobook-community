@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ELO"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/name_et"
+        android:layout_width="123dp"
+        android:layout_height="wrap_content"
+        android:hint="ELO"
+        android:imeOptions="actionNext"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/age_et"
+        android:layout_width="123dp"
+        android:layout_height="wrap_content"
+        android:hint="ELO"
+        android:imeOptions="actionNext"
+        android:inputType="number" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ELO"
+        android:layout_marginTop="16dp"
+        android:id="@+id/terms_cb"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@color/black"
+        android:text="ELO"
+        android:textColor="@color/black" />
+
+</LinearLayout>

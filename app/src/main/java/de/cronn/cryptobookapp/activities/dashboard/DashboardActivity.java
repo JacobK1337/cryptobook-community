@@ -32,13 +32,8 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarDashboard2.toolbar);
-        binding.appBarDashboard2.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Add new Transaction", Snackbar.LENGTH_LONG)
-                        .setAction("Add new Transaction", null).show();
-            }
-        });
+        binding.appBarDashboard2.fab.setOnClickListener(view -> Snackbar.make(view, "Add new Transaction", Snackbar.LENGTH_LONG)
+                .setAction("Add new Transaction", null).show());
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -47,10 +42,13 @@ public class DashboardActivity extends AppCompatActivity {
                 R.id.nav_wallet, R.id.nav_transaction_history, R.id.nav_social)
                 .setOpenableLayout(drawer)
                 .build();
+
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

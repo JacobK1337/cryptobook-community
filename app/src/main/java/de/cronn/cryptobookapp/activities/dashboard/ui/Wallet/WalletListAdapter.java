@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +54,7 @@ public class WalletListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
             holder = new ViewHolder();
-            holder.iconView = (ImageView) convertView.findViewById(R.id.imageView2);
+            holder.iconView = convertView.findViewById(R.id.imageView2);
             holder.currencyNameView = (TextView) convertView.findViewById(R.id.textView3);
             holder.amountView = (TextView) convertView.findViewById(R.id.textView4);
             convertView.setTag(holder);
@@ -66,12 +69,7 @@ public class WalletListAdapter extends BaseAdapter {
         holder.amountView.setText("Balance: " + wallet.getBalance());
 
         holder.iconView.setImageResource(imageId);
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("WalletListAdapter", "You clicked " + wallet.getCurrency().name());
-            }
-        });
+        convertView.setOnClickListener(v -> showCustomDialog());
         return convertView;
     }
 
@@ -83,8 +81,24 @@ public class WalletListAdapter extends BaseAdapter {
         return resID;
     }
 
+    void showCustomDialog() {
+        final Dialog dialog = new Dialog(context);
+        //We have added a title in the custom layout. So let's disable the default title.
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //The user will be able to cancel the dialog bu clicking anywhere outside the dialog.
+        dialog.setCancelable(true);
+        //Mention the name of the layout of your custom dialog.
 
+        dialog.setContentView(R.layout.custom_dialog);
 
+        //Initializing the views of the dialog.
+        final EditText nameEt = dialog.findViewById(R.id.name_et);
+        final EditText ageEt = dialog.findViewById(R.id.age_et);
+        final CheckBox termsCb = dialog.findViewById(R.id.terms_cb);
+        Button submitButton = dialog.findViewById(R.id.submit_button);
+
+        dialog.show();
+    }
 
     static class ViewHolder {
         ImageView iconView;
