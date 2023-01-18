@@ -64,4 +64,20 @@ public class Wallet {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+
+    public Wallet(int userId, Currency currency, BigDecimal balance) {
+        this.userId = userId;
+        this.currency = currency;
+        this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return "Wallet{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", currency=" + currency +
+                ", balance=" + balance +
+                '}';
+    }
 }
