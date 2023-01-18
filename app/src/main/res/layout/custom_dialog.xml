@@ -7,31 +7,42 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ELO"
-        android:textSize="24sp"
+        android:layout_marginBottom="16dp"
+        android:text="Choose transaction type"
         android:textColor="@color/black"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/name_et"
-        android:layout_width="123dp"
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="ELO"
-        android:imeOptions="actionNext"
-        android:inputType="text" />
+        android:layout_marginBottom="16dp"
+        android:text="Choose a currency"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
     <EditText
         android:id="@+id/age_et"
         android:layout_width="123dp"
         android:layout_height="wrap_content"
-        android:hint="ELO"
+        android:hint="Amount"
         android:imeOptions="actionNext"
-        android:inputType="number" />
+        android:inputType="numberDecimal" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ELO"
+        android:text="Add to social wall"
         android:layout_marginTop="16dp"
         android:id="@+id/terms_cb"
         android:layout_marginBottom="16dp"/>
