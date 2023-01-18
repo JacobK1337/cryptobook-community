@@ -42,11 +42,10 @@ public class WalletFragment extends Fragment {
 
     public List<Wallet> getWallets() {
         List<Wallet> wallets = new ArrayList<>();
-        wallets.add(new Wallet(1, Currency.BTC, new BigDecimal("1")));
-        wallets.add(new Wallet(2, Currency.DOGE, new BigDecimal("1512312")));
-        wallets.add(new Wallet(2, Currency.ETH, new BigDecimal("151231231")));
-        wallets.add(new Wallet(2, Currency.USD, new BigDecimal("15123113")));
-
+        wallets.add(new Wallet(1, Currency.BTC, new BigDecimal("100")));
+        wallets.add(new Wallet(2, Currency.DOGE, new BigDecimal("100")));
+        wallets.add(new Wallet(2, Currency.ETH, new BigDecimal("100")));
+        wallets.add(new Wallet(2, Currency.USD, new BigDecimal("100")));
         return wallets;
     }
 

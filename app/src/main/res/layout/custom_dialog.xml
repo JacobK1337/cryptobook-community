@@ -32,7 +32,7 @@
 
 
     <EditText
-        android:id="@+id/age_et"
+        android:id="@+id/currencyAmount"
         android:layout_width="123dp"
         android:layout_height="wrap_content"
         android:hint="Amount"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:text="Add to social wall"
         android:layout_marginTop="16dp"
-        android:id="@+id/terms_cb"
+        android:id="@+id/socialWallCheckbox"
         android:layout_marginBottom="16dp"/>
 
     <Button

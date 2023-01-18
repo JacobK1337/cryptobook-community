@@ -17,11 +17,19 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.common.collect.MoreCollectors;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import de.cronn.cryptobookapp.R;
+import de.cronn.cryptobookapp.http.Currencies;
+import de.cronn.cryptobookapp.model.User;
 import de.cronn.cryptobookapp.model.Wallet;
 import de.cronn.cryptobookapp.price.Currency;
+import de.cronn.cryptobookapp.price.Price;
+import de.cronn.cryptobookapp.transaction.TransactionExecutor;
+import de.cronn.cryptobookapp.transaction.Transactions;
 
 public class WalletListAdapter extends BaseAdapter {
     private List<Wallet> listData;
@@ -32,6 +40,7 @@ public class WalletListAdapter extends BaseAdapter {
         this.context = context;
         this.listData = listData;
         this.layoutInflater = LayoutInflater.from(context);
+        Currencies.init();
     }
 
     @Override
@@ -71,7 +80,7 @@ public class WalletListAdapter extends BaseAdapter {
         holder.amountView.setText("Balance: " + wallet.getBalance());
 
         holder.iconView.setImageResource(imageId);
-        convertView.setOnClickListener(v -> showCustomDialog());
+        convertView.setOnClickListener(v -> showCustomDialog(getItem(position)));
         return convertView;
     }
 
@@ -83,24 +92,48 @@ public class WalletListAdapter extends BaseAdapter {
         return resID;
     }
 
-    void showCustomDialog() {
+    void showCustomDialog(Object walletObject) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(true);
 
         dialog.setContentView(R.layout.custom_dialog);
 
-        final EditText ageEt = dialog.findViewById(R.id.age_et);
-        final CheckBox termsCb = dialog.findViewById(R.id.terms_cb);
         Button submitButton = dialog.findViewById(R.id.submit_button);
 
         Spinner spinner1 = dialog.findViewById(R.id.spinner1);
-        ArrayAdapter<CharSequence> adapter1 = new ArrayAdapter(context, android.R.layout.simple_spinner_item,List.of("BUY", "SELL"));
+        ArrayAdapter<CharSequence> adapter1 = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item,List.of("BUY", "SELL"));
         spinner1.setAdapter(adapter1);
 
         Spinner spinner2 = dialog.findViewById(R.id.spinner2);
         ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter(context, android.R.layout.simple_spinner_item, Currency.values());
         spinner2.setAdapter(adapter2);
+
+        EditText amount = dialog.findViewById(R.id.currencyAmount);
+        submitButton.setOnClickListener((view) -> {
+            if(!amount.getText().toString().isEmpty()){
+                Wallet wallet = (Wallet) walletObject;
+                Currency currencyToConvert = (Currency) spinner2.getSelectedItem();
+
+                User user = new User(1, "Floyd");
+                user.setWallets(listData);
+
+                BigDecimal amountToBuy = new BigDecimal(amount.getText().toString());
+                Log.i("BUYING: ",  wallet.getCurrency() + " " + amountToBuy + ", PAYING WITH: " + currencyToConvert);
+                Price convertedPrice = new Price(wallet.getCurrency(), amountToBuy)
+                        .convertTo(currencyToConvert);
+                if(spinner1.getSelectedItem().toString().equals("BUY")){
+                    Log.i("SELECTED", "BUY");
+                    Transactions.exchangeCurrencies(currencyToConvert, convertedPrice.getValue(), wallet.getCurrency())
+                            .performOn(user);
+                } else{
+                    Transactions.exchangeCurrencies(wallet.getCurrency(), convertedPrice.getValue(), currencyToConvert)
+                            .performOn(user);
+                }
+                this.notifyDataSetChanged();
+                dialog.cancel();
+            }
+        });
 
         dialog.show();
     }
