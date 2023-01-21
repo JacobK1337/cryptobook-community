@@ -2,6 +2,9 @@ package de.cronn.cryptobookapp.model;
 
 import static androidx.room.ForeignKey.CASCADE;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -17,7 +20,7 @@ import de.cronn.cryptobookapp.price.Currency;
         childColumns = "userId",
         onDelete = CASCADE)
 })
-public class Wallet {
+public class Wallet implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "walletId")
@@ -31,6 +34,23 @@ public class Wallet {
 
     @ColumnInfo(name = "balance")
     private BigDecimal balance;
+
+    protected Wallet(Parcel in) {
+        id = in.readInt();
+        userId = in.readInt();
+    }
+
+    public static final Creator<Wallet> CREATOR = new Creator<Wallet>() {
+        @Override
+        public Wallet createFromParcel(Parcel in) {
+            return new Wallet(in);
+        }
+
+        @Override
+        public Wallet[] newArray(int size) {
+            return new Wallet[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -79,5 +99,16 @@ public class Wallet {
                 ", currency=" + currency +
                 ", balance=" + balance +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(userId);
     }
 }

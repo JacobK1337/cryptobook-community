@@ -6,19 +6,25 @@ import de.cronn.cryptobookapp.price.Currency;
 import de.cronn.cryptobookapp.transaction.Context;
 
 public class SaleContext implements Context {
-    private final Currency currency;
+    private final Currency toSell;
     private final BigDecimal amount;
+    private final Currency receiveAfter;
 
-    public SaleContext(Currency currency, BigDecimal amount) {
-        this.currency = currency;
+    public SaleContext(Currency toSell, BigDecimal amount, Currency receiveAfter) {
+        this.toSell = toSell;
         this.amount = amount;
+        this.receiveAfter = receiveAfter;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public Currency getToSell() {
+        return toSell;
     }
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public Currency getReceiveAfter() {
+        return receiveAfter;
     }
 }

@@ -1,6 +1,7 @@
 package de.cronn.cryptobookapp.activities.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import java.math.BigDecimal;
 
 import de.cronn.cryptobookapp.InMemoryDbHelper;
 import de.cronn.cryptobookapp.R;
+import de.cronn.cryptobookapp.activities.dashboard.DashboardActivity;
 import de.cronn.cryptobookapp.databinding.ActivityLoginBinding;
 import de.cronn.cryptobookapp.http.Currencies;
 import de.cronn.cryptobookapp.price.Currency;
@@ -38,29 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Currencies.init();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Log.i("CONVERT", "Converting 2 BTC to DOGE");
-        Price BTC2 = new Price(Currency.BTC, new BigDecimal(2));
-        Price ETH3 = new Price(Currency.ETH, new BigDecimal(3));
-        Price USD5 = new Price(Currency.USD, new BigDecimal(5));
-        Log.i("CONVERT", BTC2.convertTo(Currency.DOGE).getValue().toString());
-
-        //1.171482E-8
-        //btc2 = 33464 USD
-        //eth3 = 3651 USD
-        //division = 9,16 btc/eth
-        Log.i("Crazy expression: ", BTC2.divide(ETH3).getAs(Currency.DOGE).multiply(USD5)
-                .getAs(Currency.BTC).getValue().toString());
-
-
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        InMemoryDbHelper db = new InMemoryDbHelper(this);
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -86,24 +68,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
+        loginViewModel.getLoginResult().observe(this, loginResult -> {
+            if (loginResult == null) {
+                return;
             }
+            loadingProgressBar.setVisibility(View.GONE);
+            if (loginResult.getError() != null) {
+                showLoginFailed(loginResult.getError());
+            }
+            if (loginResult.getSuccess() != null) {
+                updateUiWithUser(loginResult.getSuccess());
+            }
+            setResult(Activity.RESULT_OK);
+
+            finish();
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -125,23 +103,20 @@ public class LoginActivity extends AppCompatActivity {
         };
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                }
-                return false;
+        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                loginViewModel.login(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
             }
+            return false;
         });
 
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
-
             loginViewModel.login(usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
+            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            LoginActivity.this.startActivity(intent);
         });
     }
 
