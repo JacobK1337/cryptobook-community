@@ -38,15 +38,6 @@ public class Price {
         return new PriceExpression(DIVIDE, this, price);
     }
 
-    public Price convertTo(Currency convertTo){
-        Price convertToUsdPrice = Currencies.getUsdPrice(convertTo);
-        Price thisInUsd = new Price(Currency.USD,
-                this.getValue().multiply(Currencies.getUsdPrice(this.getCurrency()).getValue()));
-
-        Log.i("CONVERT: ", currency.name() + " " + value.toString() + " = " + thisInUsd.getValue() + " USD");
-        return new Price(convertTo, thisInUsd.getValue().divide(convertToUsdPrice.getValue(), RoundingMode.CEILING));
-    }
-
     public Currency getCurrency() {
         return currency;
     }

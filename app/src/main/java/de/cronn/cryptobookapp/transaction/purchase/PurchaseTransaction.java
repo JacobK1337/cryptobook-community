@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 import de.cronn.cryptobookapp.db.model.Wallet;
+import de.cronn.cryptobookapp.http.Currencies;
 import de.cronn.cryptobookapp.price.Price;
 import de.cronn.cryptobookapp.transaction.Transaction;
 import de.cronn.cryptobookapp.transaction.TransactionResult;
@@ -24,11 +25,11 @@ public class PurchaseTransaction extends Transaction<PurchaseContext> {
         Log.i("TRANSACTION", String.format("Buying %s %s by %s",
                 getContext().getAmount(), getContext().getToPurchase(), getContext().getPayWith()));
 
-        Price converted = new Price(getContext().getToPurchase(), getContext().getAmount())
-                .convertTo(getContext().getPayWith());
+        Price converted = Currencies.convert(
+                new Price(getContext().getToPurchase(), getContext().getAmount()), getContext().getPayWith());
 
-        currencyToPurchaseWallet.setBalance(currencyToPurchaseWallet.getBalance().add(getContext().getAmount()));
-        currencyToPayWithWallet.setBalance(currencyToPayWithWallet.getBalance().subtract(converted.getValue()));
+        currencyToPurchaseWallet.add(getContext().getAmount());
+        currencyToPayWithWallet.subtract(converted.getValue());
 
         Log.i("TRANSCATION", String.format(String.format("%s %s, %s, %s",
                 currencyToPurchaseWallet.getBalance(), currencyToPurchaseWallet.getCurrency(),

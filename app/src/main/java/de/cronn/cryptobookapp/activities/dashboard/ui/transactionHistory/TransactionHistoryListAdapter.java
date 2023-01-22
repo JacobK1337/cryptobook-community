@@ -41,26 +41,24 @@ public class TransactionHistoryListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TransactionHistoryListAdapter.ViewHolder holder;
-        if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
-            holder = new TransactionHistoryListAdapter.ViewHolder();
-            holder.transactionIdView = (TextView) convertView.findViewById(R.id.textView3);
-            holder.transactionDateView = (TextView) convertView.findViewById(R.id.textView4);
-            convertView.setTag(holder);
-        } else {
-            holder = (TransactionHistoryListAdapter.ViewHolder) convertView.getTag();
-        }
-
+        View view = convertView == null ? createTransactionEntryView(position) : convertView;
+        TransactionEntryViewHolder holder = (TransactionEntryViewHolder) view.getTag();
         TransactionEntry transactionEntry = this.userWithWallets.getTransactionEntries().get(position);
-
         holder.transactionIdView.setText("Transaction id: " + transactionEntry.getId());
         holder.transactionDateView.setText("Date: " + transactionEntry.getTimestamp());
+        return view;
+    }
 
+    private View createTransactionEntryView(int position){
+        View convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
+        TransactionEntryViewHolder holder = new TransactionEntryViewHolder();
+        holder.transactionIdView = convertView.findViewById(R.id.textView3);
+        holder.transactionDateView = convertView.findViewById(R.id.textView4);
+        convertView.setTag(holder);
         return convertView;
     }
 
-    static class ViewHolder {
+    static class TransactionEntryViewHolder {
         TextView transactionIdView;
         TextView transactionDateView;
     }

@@ -9,6 +9,7 @@ import java.util.List;
 import de.cronn.cryptobookapp.db.model.TransactionEntry;
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 import de.cronn.cryptobookapp.db.model.Wallet;
+import de.cronn.cryptobookapp.http.Currencies;
 import de.cronn.cryptobookapp.price.Price;
 import de.cronn.cryptobookapp.transaction.Transaction;
 import de.cronn.cryptobookapp.transaction.TransactionResult;
@@ -28,11 +29,11 @@ public class SaleTransaction extends Transaction<SaleContext> {
         Log.i("TRANSACTION", String.format("Selling %s %s for %s",
                 getContext().getAmount(), getContext().getToSell(), getContext().getReceiveAfter()));
 
-        Price converted = new Price(getContext().getToSell(), getContext().getAmount())
-                .convertTo(getContext().getReceiveAfter());
+        Price converted = Currencies.convert(new Price(getContext().getToSell(), getContext().getAmount()),
+                getContext().getReceiveAfter());
 
-        currencyToSellWallet.setBalance(currencyToSellWallet.getBalance().subtract(getContext().getAmount()));
-        currencyToReceiveAfterWallet.setBalance(currencyToReceiveAfterWallet.getBalance().add(converted.getValue()));
+        currencyToSellWallet.subtract(getContext().getAmount());
+        currencyToReceiveAfterWallet.add(converted.getValue());
 
         Log.i("TRANSCATION", String.format(String.format("%s %s, %s, %s",
                 currencyToSellWallet.getBalance(), currencyToSellWallet.getCurrency(),

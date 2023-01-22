@@ -13,6 +13,7 @@ import androidx.room.PrimaryKey;
 import java.math.BigDecimal;
 
 import de.cronn.cryptobookapp.price.Currency;
+import de.cronn.cryptobookapp.price.Price;
 
 @Entity(tableName = "wallet", foreignKeys = {
         @ForeignKey(entity = User.class,
@@ -39,6 +40,12 @@ public class Wallet {
         this.userId = userId;
         this.currency = currency;
         this.balance = balance;
+    }
+
+    public Wallet(long userId, Price price){
+        this.userId = userId;
+        this.currency = price.getCurrency();
+        this.balance = price.getValue();
     }
 
     public long getId() {
@@ -72,6 +79,18 @@ public class Wallet {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public Price getAsPrice(){
+        return new Price(getCurrency(), getBalance());
+    }
+
+    public void add(BigDecimal amount){
+        this.balance = this.balance.add(amount);
+    }
+
+    public void subtract(BigDecimal amount){
+        this.balance = this.balance.subtract(amount);
     }
 
     @Override

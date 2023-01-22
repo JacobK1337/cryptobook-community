@@ -27,9 +27,7 @@ public class TextViewObservableWalletStateDecorator implements Observable{
     }
 
     public void updateText(){
-        Price walletBalanceInUsd = new Price(wallet.getCurrency(), wallet.getBalance())
-                .convertTo(Currency.USD);
-
+        Price walletBalanceInUsd = Currencies.convert(wallet.getAsPrice(), Currency.USD);
         textView.setTextColor(Color.GREEN);
         textView.setText("Balance: " + wallet.getBalance() + " (" + walletBalanceInUsd.getValue() + " USD) " + notifications);
         notifications ++;

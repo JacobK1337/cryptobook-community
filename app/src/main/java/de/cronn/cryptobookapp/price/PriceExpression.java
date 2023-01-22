@@ -1,8 +1,13 @@
 package de.cronn.cryptobookapp.price;
 
 
+import java.io.IOException;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import de.cronn.cryptobookapp.http.Currencies;
 
 public final class PriceExpression {
     private final Type type;
@@ -29,6 +34,6 @@ public final class PriceExpression {
     }
 
     public Price getAs(Currency currency) {
-        return type.strategy.apply(first.convertTo(currency), second.convertTo(currency));
+        return type.strategy.apply(Currencies.convert(first, currency), Currencies.convert(second, currency));
     }
 }

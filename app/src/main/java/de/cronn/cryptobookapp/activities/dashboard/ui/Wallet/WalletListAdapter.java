@@ -19,15 +19,12 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentActivity;
-
 import java.math.BigDecimal;
 
 import de.cronn.cryptobookapp.R;
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 import de.cronn.cryptobookapp.db.model.Wallet;
 import de.cronn.cryptobookapp.http.Currencies;
-import de.cronn.cryptobookapp.observer.Observable;
 import de.cronn.cryptobookapp.observer.TextViewObservableWalletStateDecorator;
 import de.cronn.cryptobookapp.price.Currency;
 import de.cronn.cryptobookapp.price.Price;
@@ -63,26 +60,27 @@ public class WalletListAdapter extends BaseAdapter {
     @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
-            holder = new ViewHolder();
-            holder.iconView = convertView.findViewById(R.id.imageView2);
-            holder.currencyNameView = (TextView) convertView.findViewById(R.id.textView3);
-            holder.textViewObservableWalletStateDecorator =
-                    new TextViewObservableWalletStateDecorator((TextView) convertView.findViewById(R.id.textView4), (Wallet) getItem(position));
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
+        View view = convertView == null ? createWalletView(position) : convertView;
+        WalletViewHolder holder = (WalletViewHolder) view.getTag();
 
         Wallet wallet = this.userWithWallets.getWallets().get(position);
-
         int imageId = this.getMipmapResIdByName(wallet.getCurrency().name().toLowerCase());
         holder.currencyNameView.setText(wallet.getCurrency().name());
         holder.textViewObservableWalletStateDecorator.updateText();
         holder.iconView.setImageResource(imageId);
-        convertView.setOnClickListener(v -> showTransactionDialog(getItem(position)));
+
+        view.setOnClickListener(v -> showTransactionDialog(getItem(position)));
+        return view;
+    }
+
+    private View createWalletView(int position) {
+        View convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
+        WalletViewHolder holder = new WalletViewHolder();
+        holder.iconView = convertView.findViewById(R.id.imageView2);
+        holder.currencyNameView = convertView.findViewById(R.id.textView3);
+        holder.textViewObservableWalletStateDecorator =
+                new TextViewObservableWalletStateDecorator(convertView.findViewById(R.id.textView4), (Wallet) getItem(position));
+        convertView.setTag(holder);
         return convertView;
     }
 
@@ -95,27 +93,17 @@ public class WalletListAdapter extends BaseAdapter {
     }
 
     void showTransactionDialog(Object walletObject) {
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true);
-        dialog.setContentView(R.layout.custom_dialog);
+        final Dialog dialog = createTransactionDialog();
         Button submitButton = dialog.findViewById(R.id.submit_button);
 
-        Spinner transactionTypeSpinner = dialog.findViewById(R.id.spinner1);
-        ArrayAdapter<CharSequence> adapter1 = new ArrayAdapter(context, android.R.layout.simple_spinner_item, TransactionType.values());
-        transactionTypeSpinner.setAdapter(adapter1);
-
-        Spinner currencySpinner = dialog.findViewById(R.id.spinner2);
-        ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter(context, android.R.layout.simple_spinner_item, Currency.values());
-        currencySpinner.setAdapter(adapter2);
-
+        Spinner transactionTypeSpinner = createEnumeratedSpinner(dialog, R.id.spinner1, TransactionType.class);
+        Spinner currencySpinner = createEnumeratedSpinner(dialog, R.id.spinner2, Currency.class);
         EditText amount = dialog.findViewById(R.id.currencyAmount);
         TextView finalResultSign = dialog.findViewById(R.id.finalResultSign);
 
         amount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -123,9 +111,8 @@ public class WalletListAdapter extends BaseAdapter {
                 if (!amount.getText().toString().isEmpty()) {
                     Wallet wallet = (Wallet) walletObject;
                     Currency currency = (Currency) currencySpinner.getSelectedItem();
-                    BigDecimal am = new BigDecimal(amount.getText().toString());
-                    Price price = new Price(wallet.getCurrency(), am)
-                            .convertTo(currency);
+                    BigDecimal amountTyped = new BigDecimal(amount.getText().toString());
+                    Price price = Currencies.convert(new Price(wallet.getCurrency(), amountTyped), currency);
                     if (transactionTypeSpinner.getSelectedItem().equals(TransactionType.PURCHASE)) {
                         finalResultSign.setTextColor(Color.RED);
                         finalResultSign.setText("You pay: " + price.getValue() + " " + price.getCurrency());
@@ -163,7 +150,22 @@ public class WalletListAdapter extends BaseAdapter {
         dialog.show();
     }
 
-    static class ViewHolder {
+    private Dialog createTransactionDialog(){
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.custom_dialog);
+        return dialog;
+    }
+
+    private <T extends Enum<?>> Spinner createEnumeratedSpinner(Dialog dialog, int id, Class<T> enumType){
+        Spinner spinner = dialog.findViewById(id);
+        ArrayAdapter<T> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, enumType.getEnumConstants());
+        spinner.setAdapter(adapter);
+        return spinner;
+    }
+
+    private static class WalletViewHolder {
         ImageView iconView;
         TextView currencyNameView;
         TextViewObservableWalletStateDecorator textViewObservableWalletStateDecorator;

@@ -40,7 +40,6 @@ public class WalletFragment extends Fragment {
         return root;
     }
 
-    //monada maybe
     private long getLoggedInUserId() {
         return Optional.ofNullable(getActivity())
                 .map(activity -> Optional.ofNullable(activity.getIntent())).orElseThrow()
