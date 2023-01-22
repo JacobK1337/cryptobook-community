@@ -3,8 +3,6 @@ package de.cronn.cryptobookapp.transaction;
 import java.math.BigDecimal;
 
 import de.cronn.cryptobookapp.price.Currency;
-import de.cronn.cryptobookapp.transaction.exchange.ExchangeContext;
-import de.cronn.cryptobookapp.transaction.exchange.ExchangeTransaction;
 import de.cronn.cryptobookapp.transaction.purchase.PurchaseContext;
 import de.cronn.cryptobookapp.transaction.purchase.PurchaseTransaction;
 import de.cronn.cryptobookapp.transaction.sell.SaleContext;

@@ -9,7 +9,8 @@
         android:id="@+id/nav_wallet"
         android:name="de.cronn.cryptobookapp.activities.dashboard.ui.Wallet.WalletFragment"
         android:label="@string/menu_wallet"
-        tools:layout="@layout/fragment_wallet" />
+        tools:layout="@layout/fragment_wallet">
+    </fragment>
 
     <fragment
         android:id="@+id/nav_transaction_history"

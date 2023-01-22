@@ -1,4 +1,4 @@
-package de.cronn.cryptobookapp.model;
+package de.cronn.cryptobookapp.db.model;
 
 import static androidx.room.ForeignKey.CASCADE;
 
@@ -20,14 +20,14 @@ import de.cronn.cryptobookapp.price.Currency;
         childColumns = "userId",
         onDelete = CASCADE)
 })
-public class Wallet implements Parcelable {
+public class Wallet {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "walletId")
-    private int id;
+    private long id;
 
     @ColumnInfo(name = "userId")
-    private int userId;
+    private long userId;
 
     @ColumnInfo(name = "currency")
     private Currency currency;
@@ -35,36 +35,25 @@ public class Wallet implements Parcelable {
     @ColumnInfo(name = "balance")
     private BigDecimal balance;
 
-    protected Wallet(Parcel in) {
-        id = in.readInt();
-        userId = in.readInt();
+    public Wallet(long userId, Currency currency, BigDecimal balance) {
+        this.userId = userId;
+        this.currency = currency;
+        this.balance = balance;
     }
 
-    public static final Creator<Wallet> CREATOR = new Creator<Wallet>() {
-        @Override
-        public Wallet createFromParcel(Parcel in) {
-            return new Wallet(in);
-        }
-
-        @Override
-        public Wallet[] newArray(int size) {
-            return new Wallet[size];
-        }
-    };
-
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -85,12 +74,6 @@ public class Wallet implements Parcelable {
         this.balance = balance;
     }
 
-    public Wallet(int userId, Currency currency, BigDecimal balance) {
-        this.userId = userId;
-        this.currency = currency;
-        this.balance = balance;
-    }
-
     @Override
     public String toString() {
         return "Wallet{" +
@@ -99,16 +82,5 @@ public class Wallet implements Parcelable {
                 ", currency=" + currency +
                 ", balance=" + balance +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeInt(userId);
     }
 }

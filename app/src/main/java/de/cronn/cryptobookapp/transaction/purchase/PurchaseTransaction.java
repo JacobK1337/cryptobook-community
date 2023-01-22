@@ -2,10 +2,14 @@ package de.cronn.cryptobookapp.transaction.purchase;
 
 import android.util.Log;
 
-import de.cronn.cryptobookapp.model.User;
-import de.cronn.cryptobookapp.model.Wallet;
+import java.util.List;
+
+import de.cronn.cryptobookapp.db.model.UserWithWallets;
+import de.cronn.cryptobookapp.db.model.Wallet;
 import de.cronn.cryptobookapp.price.Price;
 import de.cronn.cryptobookapp.transaction.Transaction;
+import de.cronn.cryptobookapp.transaction.TransactionResult;
+import de.cronn.cryptobookapp.transaction.TransactionType;
 
 public class PurchaseTransaction extends Transaction<PurchaseContext> {
     public PurchaseTransaction(PurchaseContext context) {
@@ -13,7 +17,7 @@ public class PurchaseTransaction extends Transaction<PurchaseContext> {
     }
 
     @Override
-    protected void execute(User user) {
+    protected TransactionResult execute(UserWithWallets user) {
         Wallet currencyToPurchaseWallet = user.getWallet(getContext().getToPurchase());
         Wallet currencyToPayWithWallet = user.getWallet(getContext().getPayWith());
 
@@ -29,5 +33,10 @@ public class PurchaseTransaction extends Transaction<PurchaseContext> {
         Log.i("TRANSCATION", String.format(String.format("%s %s, %s, %s",
                 currencyToPurchaseWallet.getBalance(), currencyToPurchaseWallet.getCurrency(),
                 currencyToPayWithWallet.getBalance(), currencyToPayWithWallet.getBalance())));
+
+        return new TransactionResult(TransactionType.PURCHASE,
+                currencyToPurchaseWallet,
+                getContext().getAmount(),
+                currencyToPayWithWallet);
     }
 }

@@ -19,37 +19,40 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+
 import java.math.BigDecimal;
-import java.util.List;
 
 import de.cronn.cryptobookapp.R;
+import de.cronn.cryptobookapp.db.model.UserWithWallets;
+import de.cronn.cryptobookapp.db.model.Wallet;
 import de.cronn.cryptobookapp.http.Currencies;
-import de.cronn.cryptobookapp.model.User;
-import de.cronn.cryptobookapp.model.Wallet;
+import de.cronn.cryptobookapp.observer.Observable;
+import de.cronn.cryptobookapp.observer.TextViewObservableWalletStateDecorator;
 import de.cronn.cryptobookapp.price.Currency;
 import de.cronn.cryptobookapp.price.Price;
+import de.cronn.cryptobookapp.transaction.TransactionType;
 import de.cronn.cryptobookapp.transaction.Transactions;
 
 public class WalletListAdapter extends BaseAdapter {
-    private final List<Wallet> wallets;
+    private final UserWithWallets userWithWallets;
     private final LayoutInflater layoutInflater;
     private final Context context;
 
-    public WalletListAdapter(Context context, List<Wallet> wallets) {
+    public WalletListAdapter(Context context, UserWithWallets userWithWallets) {
         this.context = context;
-        this.wallets = wallets;
+        this.userWithWallets = userWithWallets;
         this.layoutInflater = LayoutInflater.from(context);
-        Currencies.init();
     }
 
     @Override
     public int getCount() {
-        return wallets.size();
+        return userWithWallets.getWallets().size();
     }
 
     @Override
     public Object getItem(int i) {
-        return wallets.get(i);
+        return userWithWallets.getWallets().get(i);
     }
 
     @Override
@@ -66,20 +69,20 @@ public class WalletListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.iconView = convertView.findViewById(R.id.imageView2);
             holder.currencyNameView = (TextView) convertView.findViewById(R.id.textView3);
-            holder.amountView = (TextView) convertView.findViewById(R.id.textView4);
+            holder.textViewObservableWalletStateDecorator =
+                    new TextViewObservableWalletStateDecorator((TextView) convertView.findViewById(R.id.textView4), (Wallet) getItem(position));
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Wallet wallet = this.wallets.get(position);
+        Wallet wallet = this.userWithWallets.getWallets().get(position);
 
         int imageId = this.getMipmapResIdByName(wallet.getCurrency().name().toLowerCase());
         holder.currencyNameView.setText(wallet.getCurrency().name());
-        holder.amountView.setText("Balance: " + wallet.getBalance());
 
         holder.iconView.setImageResource(imageId);
-        convertView.setOnClickListener(v -> showCustomDialog(getItem(position)));
+        convertView.setOnClickListener(v -> showTransactionDialog(getItem(position)));
         return convertView;
     }
 
@@ -91,22 +94,20 @@ public class WalletListAdapter extends BaseAdapter {
         return resID;
     }
 
-    void showCustomDialog(Object walletObject) {
+    void showTransactionDialog(Object walletObject) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(true);
-
         dialog.setContentView(R.layout.custom_dialog);
-
         Button submitButton = dialog.findViewById(R.id.submit_button);
 
-        Spinner spinner1 = dialog.findViewById(R.id.spinner1);
-        ArrayAdapter<CharSequence> adapter1 = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, List.of("BUY", "SELL"));
-        spinner1.setAdapter(adapter1);
+        Spinner transactionTypeSpinner = dialog.findViewById(R.id.spinner1);
+        ArrayAdapter<CharSequence> adapter1 = new ArrayAdapter(context, android.R.layout.simple_spinner_item, TransactionType.values());
+        transactionTypeSpinner.setAdapter(adapter1);
 
-        Spinner spinner2 = dialog.findViewById(R.id.spinner2);
+        Spinner currencySpinner = dialog.findViewById(R.id.spinner2);
         ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter(context, android.R.layout.simple_spinner_item, Currency.values());
-        spinner2.setAdapter(adapter2);
+        currencySpinner.setAdapter(adapter2);
 
         EditText amount = dialog.findViewById(R.id.currencyAmount);
         TextView finalResultSign = dialog.findViewById(R.id.finalResultSign);
@@ -121,18 +122,18 @@ public class WalletListAdapter extends BaseAdapter {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (!amount.getText().toString().isEmpty()) {
                     Wallet wallet = (Wallet) walletObject;
-                    Currency currency = (Currency) spinner2.getSelectedItem();
+                    Currency currency = (Currency) currencySpinner.getSelectedItem();
                     BigDecimal am = new BigDecimal(amount.getText().toString());
                     Price price = new Price(wallet.getCurrency(), am)
                             .convertTo(currency);
-                    if (spinner1.getSelectedItem().toString().equals("BUY")) {
+                    if (transactionTypeSpinner.getSelectedItem().equals(TransactionType.PURCHASE)) {
                         finalResultSign.setTextColor(Color.RED);
                         finalResultSign.setText("You pay: " + price.getValue() + " " + price.getCurrency());
                     } else {
                         finalResultSign.setTextColor(Color.GREEN);
                         finalResultSign.setText("You receive: " + price.getValue() + " " + price.getCurrency());
                     }
-                } else{
+                } else {
                     finalResultSign.setText("");
                 }
             }
@@ -145,16 +146,14 @@ public class WalletListAdapter extends BaseAdapter {
         submitButton.setOnClickListener((view) -> {
             if (!amount.getText().toString().isEmpty()) {
                 Wallet wallet = (Wallet) walletObject;
-                Currency currencyToConvert = (Currency) spinner2.getSelectedItem();
-                User user = new User(1, "Floyd");
-                user.setWallets(wallets);
+                Currency currencyToConvert = (Currency) currencySpinner.getSelectedItem();
                 BigDecimal amountOfCurrency = new BigDecimal(amount.getText().toString());
-                if (spinner1.getSelectedItem().toString().equals("BUY")) {
+                if (transactionTypeSpinner.getSelectedItem().equals(TransactionType.PURCHASE)) {
                     Transactions.purchase(wallet.getCurrency(), amountOfCurrency, currencyToConvert)
-                            .performOn(user);
+                            .performOn(userWithWallets);
                 } else {
                     Transactions.sell(wallet.getCurrency(), amountOfCurrency, currencyToConvert)
-                            .performOn(user);
+                            .performOn(userWithWallets);
                 }
                 this.notifyDataSetChanged();
                 dialog.cancel();
@@ -164,14 +163,10 @@ public class WalletListAdapter extends BaseAdapter {
         dialog.show();
     }
 
-    public List<Wallet> getWallets() {
-        return wallets;
-    }
-
     static class ViewHolder {
         ImageView iconView;
         TextView currencyNameView;
-        TextView amountView;
+        TextViewObservableWalletStateDecorator textViewObservableWalletStateDecorator;
     }
 
 }
