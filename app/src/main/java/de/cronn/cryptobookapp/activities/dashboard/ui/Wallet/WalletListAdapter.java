@@ -80,7 +80,7 @@ public class WalletListAdapter extends BaseAdapter {
 
         int imageId = this.getMipmapResIdByName(wallet.getCurrency().name().toLowerCase());
         holder.currencyNameView.setText(wallet.getCurrency().name());
-
+        holder.textViewObservableWalletStateDecorator.updateText();
         holder.iconView.setImageResource(imageId);
         convertView.setOnClickListener(v -> showTransactionDialog(getItem(position)));
         return convertView;

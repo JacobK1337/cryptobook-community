@@ -3,7 +3,6 @@ package de.cronn.cryptobookapp.db;
 import android.content.Context;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 

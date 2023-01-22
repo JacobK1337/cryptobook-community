@@ -18,7 +18,7 @@ public class TextViewObservableWalletStateDecorator implements Observable{
         this.textView = textView;
         this.wallet = wallet;
         Currencies.listenForChanges(this);
-        updateText();
+        textView.post(this::updateText);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class TextViewObservableWalletStateDecorator implements Observable{
         textView.post(this::updateText);
     }
 
-    private void updateText(){
+    public void updateText(){
         Price walletBalanceInUsd = new Price(wallet.getCurrency(), wallet.getBalance())
                 .convertTo(Currency.USD);
 
