@@ -1,32 +1,20 @@
 package de.cronn.cryptobookapp.activities.dashboard;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.SurfaceControl;
-import android.view.View;
-import android.view.Window;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavArgument;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDirections;
-import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import de.cronn.cryptobookapp.R;
-import de.cronn.cryptobookapp.activities.dashboard.ui.Wallet.WalletFragment;
 import de.cronn.cryptobookapp.databinding.ActivityDashboardBinding;
-import de.cronn.cryptobookapp.http.Currencies;
 
 public class DashboardActivity extends AppCompatActivity {
 

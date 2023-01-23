@@ -1,4 +1,4 @@
-package de.cronn.cryptobookapp.activities.dashboard.ui.transactionHistory;
+package de.cronn.cryptobookapp.activities.dashboard.ui.social;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,31 +7,34 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.cronn.cryptobookapp.R;
 import de.cronn.cryptobookapp.db.model.TransactionEntry;
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 
-public class TransactionHistoryListAdapter extends BaseAdapter {
+public class SocialWallListAdapter extends BaseAdapter {
 
-    private final UserWithWallets userWithWallets;
+    private final List<TransactionEntry> transactionEntries;
     private final LayoutInflater layoutInflater;
     private final Context context;
 
-    public TransactionHistoryListAdapter(Context context, UserWithWallets userWithWallets) {
+    public SocialWallListAdapter(Context context, List<UserWithWallets> users) {
         this.context = context;
-        this.userWithWallets = userWithWallets;
+        this.transactionEntries = users.stream().map(UserWithWallets::getTransactionEntries).flatMap(List::stream).collect(Collectors.toList());
         this.layoutInflater = LayoutInflater.from(context);
     }
 
 
     @Override
     public int getCount() {
-        return userWithWallets.getTransactionEntries().size();
+        return transactionEntries.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return userWithWallets.getTransactionEntries().get(i);
+        return transactionEntries.get(i);
     }
 
     @Override
@@ -43,7 +46,7 @@ public class TransactionHistoryListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView == null ? createTransactionEntryView(position) : convertView;
         TransactionEntryViewHolder holder = (TransactionEntryViewHolder) view.getTag();
-        TransactionEntry transactionEntry = this.userWithWallets.getTransactionEntries().get(position);
+        TransactionEntry transactionEntry = this.transactionEntries.get(position);
         holder.transactionIdView.setText("Transaction id: " + transactionEntry.getId());
         holder.transactionDateView.setText("Date: " + transactionEntry.getTimestamp());
         return view;

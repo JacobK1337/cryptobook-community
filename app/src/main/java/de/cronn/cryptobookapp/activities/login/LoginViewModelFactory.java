@@ -1,8 +1,8 @@
 package de.cronn.cryptobookapp.activities.login;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 
 import de.cronn.cryptobookapp.http.data.LoginDataSource;
 import de.cronn.cryptobookapp.http.data.LoginRepository;

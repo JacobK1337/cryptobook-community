@@ -1,8 +1,8 @@
 package de.cronn.cryptobookapp.http.data;
 
-import de.cronn.cryptobookapp.http.data.model.LoggedInUser;
-
 import java.io.IOException;
+
+import de.cronn.cryptobookapp.http.data.model.LoggedInUser;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.

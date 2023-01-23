@@ -2,8 +2,6 @@ package de.cronn.cryptobookapp.transaction.purchase;
 
 import android.util.Log;
 
-import java.util.List;
-
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 import de.cronn.cryptobookapp.db.model.Wallet;
 import de.cronn.cryptobookapp.http.Currencies;

@@ -1,9 +1,6 @@
 package de.cronn.cryptobookapp.transaction;
 
-import java.util.List;
-
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
-import de.cronn.cryptobookapp.db.model.Wallet;
 
 public abstract class Transaction<T extends Context> {
     private final T context;

@@ -4,28 +4,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import de.cronn.cryptobookapp.databinding.FragmentSocialBinding;
+import de.cronn.cryptobookapp.databinding.FragmentTransactionHistoryBinding;
+import de.cronn.cryptobookapp.db.DatabaseFacade;
 
 public class SocialFragment extends Fragment {
 
-    private FragmentSocialBinding binding;
+    private FragmentTransactionHistoryBinding binding;
+    private final DatabaseFacade databaseFacade = new DatabaseFacade();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SocialViewModel socialViewModel =
-                new ViewModelProvider(this).get(SocialViewModel.class);
+        binding = FragmentTransactionHistoryBinding.inflate(inflater, container, false);
 
-        binding = FragmentSocialBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        final ListView listView = binding.listView;
 
-        final TextView textView = binding.textSlideshow;
-        socialViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        var user = databaseFacade.findAll();
+        SocialWallListAdapter walletListAdapter = new SocialWallListAdapter(getActivity(), user);
+        listView.setAdapter(walletListAdapter);
         return root;
     }
 

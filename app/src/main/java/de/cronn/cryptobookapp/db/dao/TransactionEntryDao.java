@@ -16,4 +16,8 @@ public interface TransactionEntryDao {
 
     @Query("SELECT * FROM transactionEntry where userId = :userId")
     List<TransactionEntry> findByUserId(long userId);
+
+
+    @Query("SELECT * FROM transactionEntry")
+    List<TransactionEntry> findAll();
 }

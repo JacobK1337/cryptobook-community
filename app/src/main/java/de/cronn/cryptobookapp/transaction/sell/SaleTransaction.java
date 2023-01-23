@@ -3,10 +3,6 @@ package de.cronn.cryptobookapp.transaction.sell;
 
 import android.util.Log;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import de.cronn.cryptobookapp.db.model.TransactionEntry;
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 import de.cronn.cryptobookapp.db.model.Wallet;
 import de.cronn.cryptobookapp.http.Currencies;

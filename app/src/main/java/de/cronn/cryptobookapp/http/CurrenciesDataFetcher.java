@@ -63,7 +63,10 @@ final class CurrenciesDataFetcher implements Observer {
 
     private synchronized void fetchAndNotify() {
         try {
-            for (Currency currency : Currency.values()) {
+            ApiFetchIterator apiFetchIterator = new ApiFetchIterator();
+
+            while (apiFetchIterator.hasNext()) {
+                Currency currency = apiFetchIterator.next();
                 Price priceInUsd = CompletableFuture.supplyAsync(() -> fetchUsdPrice(currency)).join();
                 CURRENCIES_IN_USD.put(currency, priceInUsd);
             }

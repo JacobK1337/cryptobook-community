@@ -10,16 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-import de.cronn.cryptobookapp.db.AppDatabase;
 import de.cronn.cryptobookapp.databinding.FragmentWalletBinding;
 import de.cronn.cryptobookapp.db.DatabaseFacade;
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
-import de.cronn.cryptobookapp.db.model.Wallet;
 
 public class WalletFragment extends Fragment {
 

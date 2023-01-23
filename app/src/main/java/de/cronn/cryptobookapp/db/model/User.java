@@ -3,13 +3,6 @@ package de.cronn.cryptobookapp.db.model;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.Relation;
-
-import com.google.common.collect.MoreCollectors;
-
-import java.util.List;
-
-import de.cronn.cryptobookapp.price.Currency;
 
 @Entity(tableName = "user")
 public class User {
@@ -50,5 +43,24 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static class Builder {
+        private String name;
+        private String password;
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public User build() {
+            return new User(name, password);
+        }
     }
 }

@@ -5,12 +5,7 @@ import static de.cronn.cryptobookapp.price.PriceExpression.Type.MULTIPLY;
 import static de.cronn.cryptobookapp.price.PriceExpression.Type.SUBTRACT;
 import static de.cronn.cryptobookapp.price.PriceExpression.Type.SUM;
 
-import android.util.Log;
-
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-
-import de.cronn.cryptobookapp.http.Currencies;
 
 
 public class Price {

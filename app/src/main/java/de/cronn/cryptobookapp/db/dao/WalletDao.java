@@ -3,9 +3,7 @@ package de.cronn.cryptobookapp.db.dao;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import de.cronn.cryptobookapp.db.model.Wallet;

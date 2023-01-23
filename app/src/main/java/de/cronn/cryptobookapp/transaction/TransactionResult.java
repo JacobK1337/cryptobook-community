@@ -3,7 +3,6 @@ package de.cronn.cryptobookapp.transaction;
 import java.math.BigDecimal;
 
 import de.cronn.cryptobookapp.db.model.Wallet;
-import de.cronn.cryptobookapp.price.Currency;
 
 public class TransactionResult {
     private final TransactionType transactionType;

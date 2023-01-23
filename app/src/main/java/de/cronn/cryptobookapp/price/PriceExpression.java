@@ -1,11 +1,8 @@
 package de.cronn.cryptobookapp.price;
 
 
-import java.io.IOException;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import de.cronn.cryptobookapp.http.Currencies;
 

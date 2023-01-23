@@ -1,6 +1,5 @@
 package de.cronn.cryptobookapp.activities.login;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -21,10 +20,10 @@ import java.util.Arrays;
 import de.cronn.cryptobookapp.activities.dashboard.DashboardActivity;
 import de.cronn.cryptobookapp.databinding.ActivityLoginBinding;
 import de.cronn.cryptobookapp.db.DatabaseFacade;
-import de.cronn.cryptobookapp.http.Currencies;
 import de.cronn.cryptobookapp.db.model.User;
 import de.cronn.cryptobookapp.db.model.UserWithWallets;
 import de.cronn.cryptobookapp.db.model.Wallet;
+import de.cronn.cryptobookapp.http.Currencies;
 import de.cronn.cryptobookapp.price.Currency;
 
 public class LoginActivity extends AppCompatActivity {
@@ -115,7 +114,11 @@ public class LoginActivity extends AppCompatActivity {
     private long loginOrRegister(String username, String password) {
         UserWithWallets user = databaseFacade.findByUsername(username);
         if (user == null) {
-            User newUser = new User(username, password);
+            User newUser = new User.Builder()
+                    .setName(username)
+                    .setPassword(password)
+                    .build();
+
             long userId = databaseFacade.insertUser(newUser);
             Arrays.stream(Currency.values())
                     .map(currency -> new Wallet(userId, currency, new BigDecimal("1000")))

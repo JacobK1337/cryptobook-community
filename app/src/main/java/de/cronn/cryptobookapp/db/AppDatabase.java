@@ -9,10 +9,10 @@ import androidx.room.TypeConverters;
 
 import de.cronn.cryptobookapp.db.converter.Converters;
 import de.cronn.cryptobookapp.db.dao.TransactionEntryDao;
+import de.cronn.cryptobookapp.db.dao.UserDao;
 import de.cronn.cryptobookapp.db.dao.WalletDao;
 import de.cronn.cryptobookapp.db.model.TransactionEntry;
 import de.cronn.cryptobookapp.db.model.User;
-import de.cronn.cryptobookapp.db.dao.UserDao;
 import de.cronn.cryptobookapp.db.model.Wallet;
 
 @Database(entities = {User.class, Wallet.class, TransactionEntry.class}, exportSchema = false, version = 4)

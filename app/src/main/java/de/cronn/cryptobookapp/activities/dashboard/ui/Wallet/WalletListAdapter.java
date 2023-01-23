@@ -77,7 +77,7 @@ public class WalletListAdapter extends BaseAdapter {
         View convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
         WalletViewHolder holder = new WalletViewHolder();
         holder.iconView = convertView.findViewById(R.id.imageView2);
-        holder.currencyNameView = convertView.findViewById(R.id.textView4);
+        holder.currencyNameView = convertView.findViewById(R.id.textView3);
         holder.textViewObservableWalletStateDecorator =
                 new TextViewObservableWalletStateDecorator(convertView.findViewById(R.id.textView4), (Wallet) getItem(position));
         convertView.setTag(holder);

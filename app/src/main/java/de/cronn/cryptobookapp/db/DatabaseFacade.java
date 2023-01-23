@@ -3,6 +3,7 @@ package de.cronn.cryptobookapp.db;
 import android.content.Context;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -78,5 +79,15 @@ public class DatabaseFacade {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<UserWithWallets> findAll() {
+        try {
+            return CompletableFuture.supplyAsync(
+                    () -> database.userDao().findAll()).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException("Error finding User");
     }
 }
