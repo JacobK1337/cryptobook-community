@@ -52,7 +52,7 @@ public class TransactionHistoryListAdapter extends BaseAdapter {
     private View createTransactionEntryView(int position){
         View convertView = layoutInflater.inflate(R.layout.list_item_layout, null);
         TransactionEntryViewHolder holder = new TransactionEntryViewHolder();
-        holder.transactionIdView = convertView.findViewById(R.id.textView3);
+        holder.transactionIdView = convertView.findViewById(R.id.textView4);
         holder.transactionDateView = convertView.findViewById(R.id.textView4);
         convertView.setTag(holder);
         return convertView;
