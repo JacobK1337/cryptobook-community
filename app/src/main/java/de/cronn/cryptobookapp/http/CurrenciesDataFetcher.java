@@ -67,14 +67,22 @@ final class CurrenciesDataFetcher implements Observer {
 
             while (apiFetchIterator.hasNext()) {
                 Currency currency = apiFetchIterator.next();
-                Price priceInUsd = CompletableFuture.supplyAsync(() -> fetchUsdPrice(currency)).join();
+                Price priceInUsd = fetchUsdPriceRecursive(currency);
                 CURRENCIES_IN_USD.put(currency, priceInUsd);
             }
             notifyObserved();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private synchronized Price fetchUsdPriceRecursive(Currency currency) {
+        Price priceInUsd = CompletableFuture.supplyAsync(() -> fetchUsdPrice(currency)).join();
+        while (priceInUsd == null) {
+            Log.i("FETCH-RETRY", "Retrying fetch for " + currency);
+            priceInUsd = CompletableFuture.supplyAsync(() -> fetchUsdPrice(currency)).join();
+        }
+        return priceInUsd;
     }
 
     private Price fetchUsdPrice(Currency currency) {

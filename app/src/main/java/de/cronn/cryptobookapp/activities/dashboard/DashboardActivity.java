@@ -21,21 +21,26 @@ import com.google.android.material.navigation.NavigationView;
 
 import de.cronn.cryptobookapp.R;
 import de.cronn.cryptobookapp.databinding.ActivityDashboardBinding;
+import de.cronn.cryptobookapp.db.DatabaseFacade;
 
 public class DashboardActivity extends AppCompatActivity implements SensorEventListener {
-    private TextView textView;
+    private TextView tempTextView;;
+    private TextView usernameTextView;;
     private SensorManager sensorManager;
     private Sensor tmpSensor;
     private boolean isTmpSensorAvailable;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDashboardBinding binding;
 
+    DatabaseFacade databaseFacade = new DatabaseFacade();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        textView = findViewById(R.id.userName);
-        textView.setText(getIntent().getExtras().getString("USER-NAME"));
+        tempTextView = findViewById(R.id.textView);
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
@@ -43,7 +48,7 @@ public class DashboardActivity extends AppCompatActivity implements SensorEventL
             tmpSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         } else {
             isTmpSensorAvailable = false;
-            textView.setText("No sensor found");
+            tempTextView.setText("No sensor found");
         }
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
@@ -67,12 +72,16 @@ public class DashboardActivity extends AppCompatActivity implements SensorEventL
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard, menu);
 
+        usernameTextView = findViewById(R.id.username1);
+        usernameTextView.setText(databaseFacade.findByUserId(getIntent().getExtras().getLong("USER-ID" )).getUser().getName());
+
         return true;
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+
     }
 
     @Override
@@ -86,7 +95,8 @@ public class DashboardActivity extends AppCompatActivity implements SensorEventL
     @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event) {
-        textView.setText("Temperature: " + event.values[0] + "°C");
+        tempTextView = findViewById(R.id.textView);
+        tempTextView.setText("Temperature: " + event.values[0] + "°C");
     }
 
     @Override
